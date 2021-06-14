@@ -47,56 +47,6 @@ $galaxy = array(
   ),
 );
 
-/*function findShortestDistanceBetween($galaxy, $solarSystem, $startGalacticObject, $endGalacticObject) {
-  $currentSolarSystem = $solarSystem;
-  $startGalacticObjectType = $startGalacticObject->type;
-  $endGalacticObjectType = $endGalacticObject->type;
-
-  foreach ($startGalacticObject->adjacent as $value) {
-    if($endGalacticObject->name == $value && $endGalacticObjectType != "Moon") {
-      return array("x" => $startGalacticObject->x - $endGalacticObject->x, "y" => $startGalacticObject->y - $endGalacticObject->y);
-    }
-    else if($startGalacticObjectType == "Moon" && $endGalacticObjectType != "Moon") {
-      $currentKey = $startGalacticObject->name;
-      $parentKey = $startGalacticObject->adjacent[0];
-
-      /*while($currentSolarSystem[$key]->adjacent[0] != $endGalacticObject->name) {
-        $key = array_search($currentSolarSystem[$key]->adjacent[0], $currentSolarSystem);
-      }
-
-      return $key;*/
-
-      /*if($currentSolarSystem[$parentKey]->adjacent[0] == $endGalacticObject->name )  return -1;
-      else {
-        $currentKey = $parentKey;
-        $parentKey = $currentSolarSystem[$currentKey]->adjacent[0];
-
-        /*foreach ($galaxy as $key1 => $value1) {
-          foreach ($currentSolarSystem[$parentKey]->adjacent as $value2) {
-            echo("$key1: $value2\n");
-            if($galaxy[$key1][$value2]->type == "Sun") return -2;
-            /*foreach ($galaxy[$key1][$value2]->adjacent as $value3) {
-              echo($value3);
-              if($value3 == $endGalacticObject->name) return -3;
-            }*/
-        /*  }
-        }*/
-
-        /*foreach ($galaxy as $key1 => $value1) {
-          foreach ($currentSolarSystem[$parentKey]->adjacent as $value2) {
-          
-        }
-      }*/
-      /*else {
-        $key = array_search($currentSolarSystem[$key]->adjacent[0], $currentSolarSystem);
-        if($currentSolarSystem[$key]->adjacent[0] == $endGalacticObject->name )  return -1;
-      }*/
-      #$currentSolarSystem[$key];
-    //}
-   // }
-  //}
-//}
-
 function findShortestDistanceBetween($galaxy, $solarSystem, $startGalacticObject, $endGalacticObject) {
   $currentSolarSystem = $solarSystem;
   $startGalacticObjectType = $startGalacticObject->type;
@@ -105,27 +55,65 @@ function findShortestDistanceBetween($galaxy, $solarSystem, $startGalacticObject
   $parentKey;
   $result;
 
+  // Base case: End is immediately adjacent to Start
   foreach ($startGalacticObject->adjacent as $value) {
     if($endGalacticObject->name == $value && $endGalacticObjectType != "Moon") {
-      $result = array("x" => $startGalacticObject->x - $endGalacticObject->x, "y" => $startGalacticObject->y - $endGalacticObject->y);
+      $result = sqrt(pow($endGalacticObject->x - $startGalacticObject->x, 2) + pow($endGalacticObject->y - $startGalacticObject->y, 2));
       return $result;
     }
   }
   if($startGalacticObjectType = "Moon") {
+    // At parent Planet
     $currentKey = $startGalacticObject->adjacent[0];
     foreach($currentSolarSystem[$currentKey]->adjacent as $value) {
       if($endGalacticObject->name == $value && $endGalacticObjectType != "Moon" && $endGalacticObjectType != "Planet") {
         $result =  array("x" => $startGalacticObject->x - $endGalacticObject->x, "y" => $startGalacticObject->y - $endGalacticObject->y);
-        return $result;
+        return -1;
       }
-    $currentKey = array_key_first($currentSolarSystem);
     }
+
+    // At current Sun
+    $currentKey = array_key_first($currentSolarSystem);
+    foreach ($currentSolarSystem[$currentKey]->adjacent as $value) {
+      if($endGalacticObject->name == $value) {
+        //$result =  array("x" => $startGalacticObject->x - $endGalacticObject->x, "y" => $startGalacticObject->y - $endGalacticObject->y);
+        return -2;
+      }
+    }
+
+      // Go through each solar system
+      foreach ($galaxy as $solarSystemKey => $value1) {
+        // Go through adjacent elements of the current sun
+        foreach ($currentSolarSystem[$currentKey]->adjacent as $value2) {
+
+          // Check if we are not back in the same solar system
+          if(!array_key_exists($currentKey, $galaxy[$solarSystemKey])) {
+           // $currentKey = array_key_first($galaxy[$solarSystemKey]);
+
+           // Check if the solar system has the specified adjacent elements
+           if(array_key_exists($value2, $galaxy[$solarSystemKey])) {
+             #echo($galaxy[$solarSystemKey][$value2]->name);
+
+             // Check other solar systems
+            foreach($galaxy[$solarSystemKey][$value2]->adjacent as $value3) {
+              // Check if we are not out of our current solar system
+              if(array_key_exists($value3, $galaxy[$solarSystemKey])) {
+                // If the sun has the specified ending Galactic object as adjacent element, return it;
+                if($endGalacticObject->name == $value3) {
+                  return -3;
+                }
+              }
+            }
+           }
+          }
+        }
+      }
   }
 }
 
 
 
-$result = findShortestDistanceBetween($galaxy,$galaxy["Earth solar system"], $galaxy['Earth solar system']['Earth']->moons['moon1'], $galaxy['Centauri solar system']['Planet X']);
+$result = findShortestDistanceBetween($galaxy,$galaxy["Earth solar system"], $galaxy['Earth solar system']['Earth']->moons['moon1'], $galaxy['Earth solar system']['Earth']);
 echo ($result);
 
 /*foreach ($result as $key => $value) {
