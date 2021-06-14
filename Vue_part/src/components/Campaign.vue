@@ -6,8 +6,8 @@
     />
     <div>
       <h3>Title: {{ campaign.title }}</h3>
-      <h4>Date: {{ campaign.start_date }}</h4>
-      <h5>Status: {{ campaign.status }}</h5>
+      <h4>Date: {{ getDate }}</h4>
+      <h5>Status: {{ getStatus }}</h5>
       <div
         v-for="singleCreative in campaign.creatives"
         :key="singleCreative.title"
@@ -64,8 +64,22 @@ export default {
       this.$emit("change-creative-status", updatedCampaign);
     },
   },
+  computed: {
+    getStatus() {
+      let currentStatus = this.campaign.status;
+      if (this.campaign.status == 0) currentStatus = "Draft";
+      else if (this.campaign.status == 1) currentStatus = "Live";
+      else if (this.campaign.status == 2) currentStatus = "Finished";
+
+      return currentStatus;
+    },
+    getDate() {
+      const date = new Date(this.campaign.start_date);
+
+      return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+    },
+  },
 };
 </script>
 
-<style>
-</style>
+<style></style>

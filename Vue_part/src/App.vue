@@ -54,8 +54,8 @@ export default {
 
       this.campaigns.sort((a, b) =>
         newestToLatest
-          ? new Date(a.start_date) - new Date(b.start_date)
-          : new Date(b.start_date) - new Date(a.start_date)
+          ? new Date(b.start_date) - new Date(a.start_date)
+          : new Date(a.start_date) - new Date(b.start_date)
       );
     },
     addCreative(updatedCampaign) {
@@ -63,6 +63,7 @@ export default {
         (el) => el.title == updatedCampaign.title
       );
       this.campaigns[index] = updatedCampaign;
+      this.updateCampaignStatus(index);
     },
     changeCampaignStatus(updatedStatusCampaign) {
       const index = this.campaigns.findIndex(
@@ -170,7 +171,7 @@ export default {
       },
       {
         title: "Second Campaign",
-        start_date: 1623276887829,
+        start_date: 1523276887829,
         status: 1,
         creatives: [
           {
@@ -192,5 +193,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>
