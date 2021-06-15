@@ -2,6 +2,7 @@
 
 ### This is the repository for NEXD test
 
+## In Vue folder
 ## Project setup
 ```
 npm install
@@ -24,3 +25,8 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+## In php folder
+```
+php index.php
+```
